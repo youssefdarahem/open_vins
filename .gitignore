@@ -8,3 +8,6 @@ doxgen_generated
 *.swo
 doc
 .vscode
+sim_bags/*
+ov_data/sim_bags_extracted/*
+
