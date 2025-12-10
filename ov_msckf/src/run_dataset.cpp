@@ -30,6 +30,7 @@
 #include <opencv2/opencv.hpp>
 
 #include "core/VioManager.h"
+#include "state/State.h"
 #include "utils/colors.h"
 #include "utils/print.h"
 #include "utils/sensor_data.h"
@@ -168,6 +169,10 @@ int main(int argc, char **argv) {
     
     PRINT_INFO("Starting processing...\n");
     
+    // Open output file
+    ofstream traj_file("trajectory.txt");
+    traj_file << fixed << setprecision(9);
+
     // Processing loop
     size_t imu_idx = 0;
     size_t cam_idx = 0;
@@ -220,8 +225,21 @@ int main(int argc, char **argv) {
         if (!cam_data.images.empty()) {
             PRINT_INFO("Processing camera at %.9f\n", cam_data.timestamp);
             sys->feed_measurement_camera(cam_data);
+            
+            // Save trajectory
+            if (sys->initialized()) {
+                auto state = sys->get_state();
+                Eigen::Vector3d p = state->_imu->pos();
+                Eigen::Vector4d q = state->_imu->quat();
+                
+                // Format: timestamp tx ty tz qx qy qz qw
+                traj_file << cam_data.timestamp << " " 
+                          << p(0) << " " << p(1) << " " << p(2) << " " 
+                          << q(0) << " " << q(1) << " " << q(2) << " " << q(3) << endl;
+            }
         }
     }
     
+    traj_file.close();
     return EXIT_SUCCESS;
 }
