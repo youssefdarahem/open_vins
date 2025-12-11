@@ -10,7 +10,18 @@ if (NOT OpenCV_FOUND)
 endif ()
 find_package(Boost REQUIRED COMPONENTS system filesystem thread date_time)
 find_package(Ceres REQUIRED)
+
+find_package(fastcdr QUIET)
+find_package(fastrtps QUIET)
+find_package(realsense2)
 message(STATUS "OPENCV: " ${OpenCV_VERSION} " | BOOST: " ${Boost_VERSION} " | CERES: " ${Ceres_VERSION})
+if (realsense2_FOUND)
+    message(STATUS "REALSENSE2: " ${realsense2_VERSION})
+    add_definitions(-DREALSENSE_AVAILABLE=1)
+else ()
+    message(STATUS "REALSENSE2: NOT FOUND")
+    add_definitions(-DREALSENSE_AVAILABLE=0)
+endif ()
 
 # By default we build with ROS, but you can disable this and just build as a library
 option(ENABLE_ROS "Enable or disable building with ROS (if it is found)" ON)

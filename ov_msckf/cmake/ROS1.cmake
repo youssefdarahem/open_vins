@@ -30,6 +30,10 @@ include_directories(
         ${catkin_INCLUDE_DIRS}
 )
 
+if (realsense2_FOUND)
+    include_directories(${realsense2_INCLUDE_DIR})
+endif ()
+
 # Set link libraries used by all binaries
 list(APPEND thirdparty_libraries
         ${Boost_LIBRARIES}
@@ -37,6 +41,10 @@ list(APPEND thirdparty_libraries
         ${CERES_LIBRARIES}
         ${catkin_LIBRARIES}
 )
+
+if (realsense2_FOUND)
+    list(APPEND thirdparty_libraries ${realsense2_LIBRARY})
+endif ()
 
 # If we are not building with ROS then we need to manually link to its headers
 # This isn't that elegant of a way, but this at least allows for building without ROS
